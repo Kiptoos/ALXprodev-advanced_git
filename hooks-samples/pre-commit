@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# pre-commit: ensure every first-level directory (except .git and hooks-samples) has a README.md
+set -euo pipefail
+missing=0
+while IFS= read -r -d '' dir; do
+  base=$(basename "$dir")
+  [[ "$base" == ".git" || "$base" == "hooks-samples" ]] && continue
+  if [[ ! -f "$dir/README.md" ]]; then
+    echo "pre-commit: missing README.md in directory: $dir" >&2
+    missing=1
+  fi
+done < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
+if [[ $missing -ne 0 ]]; then
+  echo "pre-commit: please add README.md files before committing." >&2
+  exit 1
+fi

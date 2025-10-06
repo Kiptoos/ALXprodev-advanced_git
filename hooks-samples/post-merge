@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# post-merge: log merges into main branch
+set -euo pipefail
+current_branch=$(git rev-parse --abbrev-ref HEAD || echo "")
+if [[ "$current_branch" == "main" || "$current_branch" == "master" ]]; then
+  ts=$(date -Is)
+  last_merge=$(git log --merges -1 --pretty=format:'%h %s' || echo "merge")
+  echo "$ts post-merge on $current_branch: $last_merge" >> .git/merge-log.txt
+fi
